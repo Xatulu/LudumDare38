@@ -4,7 +4,7 @@ import { Parameters } from './parameters';
 import { Upgrades } from './upgrades';
 
 const PARAMETERS: Parameters[] = [
-  { id: 1, name: 'Population', amount: 1, time: 1, count: "<a href='javascript:;'>Clone yourself!</a>" }
+  { id: 1, name: 'Population', amount: 500, time: 1, count: "<a href='javascript:;'>Clone yourself!</a>" }
 ];
 
 const UPGRADES: Upgrades[] = [];
@@ -56,7 +56,7 @@ export class AppComponent  {
   parameters = PARAMETERS;
   upgrades = UPGRADES;
 //  kpis = KPIS; 
-  buildings: Boolean[] = [false, false, false, false, false];
+  buildings: Boolean[] = [false, false, false, false, false, false];
   disabled: Boolean[] = [false, false, false, false, false];
   timer: any;
   inhabitants = "by you";
@@ -71,6 +71,8 @@ export class AppComponent  {
 
   hungry = "";
   PeopleHungry = "";
+
+  houseUpgrade = 0;
 
   increase(parameter : Parameters){    
       switch(parameter.id){
@@ -120,6 +122,9 @@ export class AppComponent  {
       PARAMETERS[upgrade.cost_id].amount -= upgrade.cost;
       this.killedPeople = upgrade.cost;
       upgrade.cost = Math.floor(upgrade.cost * Math.pow(1.1, upgrade.purchased));
+      if(upgrade.id = 2){
+                this.houseUpgrade += 1;
+      }
     }
 
     this.updateUpgrades();
@@ -131,10 +136,17 @@ export class AppComponent  {
     for (let i=0;i<UPGRADES.length;i++){
       switch(i){
         case 0:
-        if(UPGRADES[i].cost + 1 > PARAMETERS[UPGRADES[i].cost_id].amount){
-          UPGRADES[i].buytext =  "You need " + (UPGRADES[i].cost - PARAMETERS[UPGRADES[i].cost_id].amount + 1) + " more Clones.";
+        if(UPGRADES[0].cost + 1 > PARAMETERS[UPGRADES[0].cost_id].amount){
+          UPGRADES[0].buytext =  "You need " + (UPGRADES[0].cost - PARAMETERS[UPGRADES[0].cost_id].amount + 1) + " more Clones.";
         } else {
-          UPGRADES[i].buytext =  "<a href='javascript:;'>Sacrifice "+UPGRADES[i].cost +" villagers to improve your clining facilities!</a>";
+          UPGRADES[0].buytext =  "<a href='javascript:;'>Sacrifice "+UPGRADES[0].cost +" villagers to improve your cloning facilities!</a>";
+        }
+        break;
+        case 1:
+        if(UPGRADES[1].cost + 1 > PARAMETERS[UPGRADES[1].cost_id].amount){
+          UPGRADES[1].buytext =  "You need " + (UPGRADES[1].cost - PARAMETERS[UPGRADES[1].cost_id].amount + 1) + " more Clones.";
+        } else {
+          UPGRADES[1].buytext =  "<a href='javascript:;'>Sacrifice "+UPGRADES[1].cost +" villagers to improve your house construction!</a>";
         }
         break;
       }
@@ -142,7 +154,7 @@ export class AppComponent  {
   }
 
   updateBuildings(parameter : Parameters){
-    if(UPGRADES.length === 1 && parameter.id === 1){
+    if(UPGRADES.length > 0 && parameter.id === 1){
     parameter.amount = parameter.amount + Math.pow(2, UPGRADES[0].purchased);
     } else {
     parameter.amount = parameter.amount + 1;
@@ -191,8 +203,8 @@ export class AppComponent  {
       UPGRADES.push({id: 1, name: "Improved Cloning Facilities", purchased: 0, cost: 100, cost_id: 0, buytext: "<a href='javascript:;'>Sacrifice 100 villagers to improve your cloning facilities!</a>"});
       this.buildings[4] = true;
     } else if (PARAMETERS[0].amount > 150 && !this.buildings[5]){
-      UPGRADES.push({id: 1, name: "Improved House Construction", purchased: 0, cost: 150, cost_id: 0, buytext: "<a href='javascript:;'>Sacrifice 150 villagers to improve your house construction!</a>"});
-      this.buildings[4] = true;
+      UPGRADES.push({id: 2, name: "Improved House Construction", purchased: 0, cost: 150, cost_id: 0, buytext: "<a href='javascript:;'>Sacrifice 150 villagers to improve your house construction!</a>"});
+      this.buildings[5] = true;
     }
     if(PARAMETERS[0].amount >= 10){
       this.situation = true;
@@ -201,8 +213,8 @@ export class AppComponent  {
   updateTexts(){
     this.inhabitants = "by " + PARAMETERS[0].amount + " people, including yourself";
     if (this.buildings[0]){
-      this.housing = "You currently have " + PARAMETERS[1].amount + " houses in your world, providing shelter for " + PARAMETERS[1].amount * 4 + " inhabitants.";
-      this.AmountHomeless = Math.max(0, (PARAMETERS[0].amount - PARAMETERS[1].amount * 4));
+      this.housing = "You currently have " + PARAMETERS[1].amount + " houses in your world, providing shelter for " + PARAMETERS[1].amount * (4 * Math.floor(Math.pow(1.33, this.houseUpgrade))) + " inhabitants.";
+      this.AmountHomeless = Math.max(0, (PARAMETERS[0].amount - PARAMETERS[1].amount * (4 * Math.floor(Math.pow(1.33, this.houseUpgrade)))));
       this.PeopleOnStreets = "This leaves " + this.AmountHomeless + " people homeless."
     }
     if (this.buildings[1]){
@@ -223,11 +235,11 @@ export class AppComponent  {
       this.disabled[0] = true;
       this.Situation = "You should look into building more houses. People are getting unruly.";
     } else if (homelessness > 0.2){
-      PARAMETERS[0].count = "<a href='javascript:;'>Build a house!</a>";
+      PARAMETERS[0].count = "<a href='javascript:;'>Clone yourself!</a>";
       this.disabled[0] = false;
       this.Situation = "Maybe you should get more houses.";
     } else {
-      PARAMETERS[0].count = "<a href='javascript:;'>Build a house!</a>";
+      PARAMETERS[0].count = "<a href='javascript:;'>Clone yourself!</a>";
       this.disabled[0] = false;
       this.Situation = "Everything is fine.";
     }
