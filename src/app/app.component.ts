@@ -188,7 +188,10 @@ export class AppComponent  {
       PARAMETERS.push({ id: 5, name: "Church", amount: 0, time: 20, count: "<a href='javascript:;'>Build a Church!</a>" });
       this.buildings[3] = true;   
     } else if (PARAMETERS[0].amount > 100 && !this.buildings[4]){
-      UPGRADES.push({id: 1, name: "Improved Cloning Facilities", purchased: 0, cost: 100, cost_id: 0, buytext: "<a href='javascript:;'>Sacrifice 100 villagers to improve your clining facilities!</a>"});
+      UPGRADES.push({id: 1, name: "Improved Cloning Facilities", purchased: 0, cost: 100, cost_id: 0, buytext: "<a href='javascript:;'>Sacrifice 100 villagers to improve your cloning facilities!</a>"});
+      this.buildings[4] = true;
+    } else if (PARAMETERS[0].amount > 150 && !this.buildings[5]){
+      UPGRADES.push({id: 1, name: "Improved House Construction", purchased: 0, cost: 150, cost_id: 0, buytext: "<a href='javascript:;'>Sacrifice 150 villagers to improve your house construction!</a>"});
       this.buildings[4] = true;
     }
     if(PARAMETERS[0].amount >= 10){
